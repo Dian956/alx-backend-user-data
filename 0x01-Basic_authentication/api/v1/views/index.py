@@ -1,30 +1,26 @@
-#!/usr/bin/python3
-"""index"""
+#!/usr/bin/env python3
+""" Module of Index views
+"""
+from flask import jsonify, abort
 from api.v1.views import app_views
-from flask import jsonify
-from models import storage
-from models.user import User
-from models.place import Place
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.review import Review
-
-classes = {"users": "User", "places": "Place", "states": "State",
-           "cities": "City", "amenities": "Amenity",
-           "reviews": "Review"}
 
 
-@app_views.route('/status', methods=['GET'])
-def status():
-    ''' routes to status page '''
-    return jsonify({'status': 'OK'})
+@app_views.route('/status', methods=['GET'], strict_slashes=False)
+def status() -> str:
+    """ GET /api/v1/status
+    Return:
+      - the status of the API
+    """
+    return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats', methods=['GET'])
-def count():
-    '''retrieves the number of each objects by type'''
-    count_dict = {}
-    for cls in classes:
-        count_dict[cls] = storage.count(classes[cls])
-    return jsonify(count_dict)
+@app_views.route('/stats/', strict_slashes=False)
+def stats() -> str:
+    """ GET /api/v1/stats
+    Return:
+      - the number of each objects
+    """
+    from models.user import User
+    stats = {}
+    stats['users'] = User.count()
+    return jsonify(stats)
